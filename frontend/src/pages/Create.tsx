@@ -10,7 +10,6 @@ const App = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  // Optional: Automatically refresh tasks after submitting 
   const { tasks, isLoading, error } = useFetchTask();
   console.log(tasks, isLoading, error)
 
@@ -53,7 +52,7 @@ const App = () => {
                 Create a new task
               </h5>
 
-{/* Title */}
+              {/* ✅ Title */}
               <div>
                 <label
                   htmlFor="title"
@@ -75,7 +74,7 @@ const App = () => {
                 />
               </div>
 
-{/* Description */}
+{/*  */}
               <div>
                 <label
                   htmlFor="description"
@@ -97,7 +96,7 @@ const App = () => {
                 />
               </div>
 
-  {/* Status */}
+              {/* ✅ Status */}
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -130,12 +129,9 @@ const App = () => {
                 {isSubmitting ? "Creating..." : "Create"}
               </button>
 
-              {/* ✅ Message Feedback */}
               {message && (
                 <p
-                  className={`text-sm text-center ${
-                    message.startsWith("✅") ? "text-green-600" : "text-red-600"
-                  }`}
+                  className={`text-sm text-center text-green-400`}
                 >
                   {message}
                 </p>

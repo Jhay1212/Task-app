@@ -1,7 +1,7 @@
 import React, { type FC } from "react";
 import { Database, Hourglass, XCircle, CheckSquare } from "lucide-react";
 import useFetchTask from "../hooks/useFetchTask";
-
+import type Task from "../typings/task";
 type ColorKey = "blue" | "purple" | "red" | "green";
 
 interface StatusCardProps {
@@ -49,8 +49,8 @@ const COLOR_STYLES: Record<
 };
 
 const StatusCard: FC<StatusCardProps> = ({ title, value, percent, icon, color }) => {
- const style = COLOR_STYLES[color];
-    
+  const style = COLOR_STYLES[color];
+  
 
   return (
     <div
@@ -79,29 +79,40 @@ const StatusCard: FC<StatusCardProps> = ({ title, value, percent, icon, color })
 };
 
 const StatusCards: FC = () => {
-    // console.log(tasks.length)
+  // console.log(tasks.length)
+  const { tasks, isLoading, error } = useFetchTask();
 
+  const normalizedTasks: Task[] = Array.isArray(tasks) // turn tasks into regular array
+    ? tasks
+    : tasks
+    ? [tasks]
+    : [];
+  const completed = normalizedTasks.filter(task => task.completed).length;
+  const inProgress = normalizedTasks.filter(task => !task.completed).length;
+  const progressPercentage = Math.round((inProgress / normalizedTasks.length) * 100);
+  const completedPercentage = Math.round((completed / normalizedTasks.length) * 100)
+  
   return (
     <div className="flex flex-wrap gap-4 justify-center items-stretch">
       <StatusCard
         title="Total"
-        value={12}
+        value={normalizedTasks.length}
         percent="100%"
         color="blue"
         icon={<Database size={28} />}
       />
       <StatusCard
         title="In Progress"
-        value={1}
-        percent="25%"
+        value={inProgress}
+        percent={progressPercentage + "%"}
         color="purple"
         icon={<Hourglass size={28} />}
       />
   
       <StatusCard
         title="Completed"
-        value={1}
-        percent="25%"
+        value={completed}
+        percent={completedPercentage + "%"}
         color="green"
         icon={<CheckSquare size={28} />}
       />

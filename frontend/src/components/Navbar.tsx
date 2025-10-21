@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
 
             <li className="flex items-center gap-3 py-4 px-6 hover:bg-blue-500 rounded-lg transition-all cursor-pointer">
               <RefreshCw size={22} />
-              <Link to="/tasks/update"  className="font-semibold text-lg">Update</Link >
+              <Link to="/tasks/create"  className="font-semibold text-lg">Create</Link >
 
             </li>
 

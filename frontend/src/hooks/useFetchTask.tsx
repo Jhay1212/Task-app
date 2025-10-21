@@ -9,7 +9,7 @@ type UseFetchTaskReturn = {
   error: string | null;
 };
 
-const useFetchTask = (id: number | null = null): UseFetchTaskReturn => {
+const useFetchTask = (id: string | null = null): UseFetchTaskReturn => {
   const [tasks, setTasks] = useState<Task[] | Task | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
