@@ -1,34 +1,48 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-type Tasks = {
-    id: number,
-    title: string,
-    description: string,
-    date_created: Date
-}
+import axios, { AxiosError } from "axios";
 
-const useFetchTask = (id: number | null = null) => {
-    const [tasks, setTasks] = useState<Tasks[] | Tasks>([])
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+import type Task from "../typings/task";
 
+type UseFetchTaskReturn = {
+  tasks: Task[] | Task | null;
+  isLoading: boolean;
+  error: string | null;
+};
 
-    useEffect(() => {
-        try {
-            const fetchTasks = async () => {
-                setIsLoading(true)
-                const response = await axios.get(id? `http://127.0.0.1:8000/api/tasks/${id}` : "http://127.0.0.1:8000/api/tasks/")
-                setTasks(response.data)
-            }
-            fetchTasks();
-        } catch (error: any) {
-            setError(error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [])
+const useFetchTask = (id: number | null = null): UseFetchTaskReturn => {
+  const [tasks, setTasks] = useState<Task[] | Task | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-    return [tasks, isLoading, error]
-}
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const fetchTasks = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const url = id
+          ? `http://127.0.0.1:8000/api/tasks/${id}/`
+          : "http://127.0.0.1:8000/api/tasks/";
+
+        const response = await axios.get(url, { signal: controller.signal });
+        setTasks(response.data);
+      } catch (err) {
+        if (axios.isCancel(err)) return;
+        const axiosErr = err as AxiosError;
+        setError(axiosErr.message || "Failed to fetch tasks");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTasks();
+
+    return () => controller.abort();
+  }, [id]);
+
+  return { tasks, isLoading, error };
+};
 
 export default useFetchTask;
